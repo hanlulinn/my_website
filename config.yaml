@@ -1,4 +1,4 @@
-baseURL: "https://hanlu-lin.netlify.app/"
+baseURL: https://hanlu-lin.netlify.app/
 languageCode: en-us
 title: Portfolio website for Hanlu Lin
 theme: forty
