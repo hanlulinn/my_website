@@ -81,10 +81,10 @@ params:
   tiles:
     enable: yes
     showcase:
-      - image: pic01.jpg
-        subtitle: Ipsum Dolor Sit Amet
-        title: Aliquam
-        url: blogs/aliquam
+      - image: backgroun_sunset.jpg
+        subtitle: I love sunsets
+        title: hanlulin
+        url: blogs/hanlulin
       - image: pic02.jpg
         subtitle: Feugiat Amet Tempus
         title: Tempus
