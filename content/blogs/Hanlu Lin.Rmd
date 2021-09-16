@@ -1,17 +1,17 @@
 ---
-categories:
-- ""
-- ""
-date: "2017-10-31T22:42:51-05:00"
+title: "Pre-Programme work"
+date: '2017-10-31T22:42:51-05:00'
 description: Nullam et orci eu lorem consequat tincidunt vivamus et sagittis magna
   sed nunc rhoncus condimentum sem. In efficitur ligula tate urna. Maecenas massa
   sed magna lacinia magna pellentesque lorem ipsum dolor. Nullam et orci eu lorem
   consequat tincidunt. Vivamus et sagittis tempus.
-draft: false
-image: pic07.jpg
-keywords: ""
+draft: no
+image: pic05.jpg
+keywords: ''
 slug: aboutme
-title: selfintroduction
+categories:
+- ''
+- ''
 ---
 
 ```{r load-libraries, warning=FALSE, message=FALSE, echo=FALSE}
@@ -21,9 +21,8 @@ library(here)
 library(janitor)
 ```
 
-The goal is to test your software installation, to demonstrate competency in Markdown, and in the basics of `ggplot`.
 
-# Task 1: Short biography written using markdown
+## Task 1: Short biography written using markdown
 
 ## Brief Biography
 
@@ -37,7 +36,7 @@ Before I applied to London Business School for the MAM program, I have several i
 From the internship experience, I decided to dig deeper into the business analytics fields. And I applied for the master degree in **London Business School**, which is a renowned business school with such beautiful campus ![campus](http://prod-upp-image-read.ft.com/e161f29e-cf1d-11e7-b781-794ce08b24dc) located in London.I very much look forward to my study life there in London Business School for the coming years.  
 
 
-# Task 2: `gapminder` country comparison
+## Task 2: `gapminder` country comparison
 
 ```{r}
 glimpse(gapminder)
@@ -279,11 +278,3 @@ base_plot + stat_ecdf(geom = "step", pad = FALSE) +
 I think the distribution histogram best communicates the variability of the `incident_notional_cost` values, as we can see clearly how it distributes from the graph.\
 From the graph, we can tell that horses are more expensive to rescue than other animals. The cost of most cases of horses is around 1000, and some of the cases indicates costs around 2000-3000. While other animals like rabbit, hamster, squirrel, ferret, and cat, the incident cost of these animal groups are more centered in the range of 200-400, which is relatively lower. These animals are cheaper to rescue instead. 
 
-
-## Details
-
-If you want to, please answer the following
-
--   Who did you collaborate with: By myself.
--   Approximately how much time did you spend on this problem set: half an hour.
--   What, if anything, gave you the most trouble: So far so good.

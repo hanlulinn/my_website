@@ -10,7 +10,7 @@ params:
     #subtitle: |-
       #A RESPONSIVE SITE TEMPLATE DESIGNED BY HTML5 UP
       #AND RELEASED UNDER THE CREATIVE COMMONS.
-    title: Hi, my name is Hanlu Lin  
+    title: Welcome to Hanlu's world  
   blog: {}
   contact:
     address:
@@ -76,27 +76,27 @@ params:
       - name: Elements
         url: elements.html
     menu: Menu
-    subtitle: By HTML5 Up
-    title: Forty
+    subtitle: Lin
+    title: Hanlu
   tiles:
     enable: yes
     showcase:
       - image: pic07.jpg
-        subtitle: "Play the field and have some fun"
+        subtitle: Play the field and have some fun
         title: About me
         url: blogs/aboutme
-      - image: pic02.jpg
-        subtitle: Feugiat Amet Tempus
-        title: Tempus
-        url: blogs/tempus
-      - image: pic03.jpg
-        subtitle: Lorem Etiam Nullam
-        title: Magna
-        url: blogs/magna
-      - image: pic04.jpg
-        subtitle: Nisl Sed Aliquam
-        title: Ipsum
-        url: blogs/ipsum
+      - image: pic06.jpg
+        subtitle: First project in Applied Statistics Course
+        title: Project 1
+        url: blogs/project1
+      - image: pic05.jpg
+        subtitle: Second project in Applied Statistics Course
+        title: Project 2
+        url: blogs/project2
+      - image: pic08.jpg
+        subtitle: Third project in Applied Statistics Course
+        title: Project 3
+        url: blogs/project3
       - image: pic05.jpg
         subtitle: Ipsum Dolor Sit Amet
         title: Consequat

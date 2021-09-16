@@ -1,0 +1,915 @@
+---
+title: "Project 2 - Applied Statistics"
+date: '2017-10-31T22:26:09-05:00'
+description: Lorem Etiam Nullam
+draft: no
+image: pic05.jpg
+keywords: ''
+slug: project2
+categories:
+- ''
+- ''
+---
+
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<div id="climate-change-and-temperature-anomalies" class="section level1">
+<h1>Climate change and temperature anomalies</h1>
+<div id="loading-the-data" class="section level2">
+<h2>Loading the data</h2>
+<pre class="r"><code>weather &lt;- 
+  read_csv(&quot;https://data.giss.nasa.gov/gistemp/tabledata_v4/NH.Ts+dSST.csv&quot;, 
+           skip = 1, 
+           na = &quot;***&quot;)</code></pre>
+</div>
+<div id="tidying-the-data-using-select-and-pivot_longer" class="section level2">
+<h2>Tidying the data using select() and pivot_longer()</h2>
+<pre class="r"><code>tidyweather &lt;- weather %&gt;%
+  select(1:13) %&gt;% #Selecting Year and month variables
+  pivot_longer(cols=2:13, names_to=&#39;month&#39;, values_to=&#39;delta&#39;) #Tidying the data from wide to long format so that we have a column for the months and the corresponding temperature data respectively</code></pre>
+<div id="checking-for-year-month-and-delta-columns-in-the-tidyweather-dataframe" class="section level3">
+<h3>Checking for year, month, and delta columns in the tidyweather dataframe</h3>
+<pre class="r"><code>skim(tidyweather)</code></pre>
+<table>
+<caption><span id="tab:unnamed-chunk-1">Table 1: </span>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">tidyweather</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">1704</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">3</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">2</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">month</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">3</td>
+<td align="right">0</td>
+<td align="right">12</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Year</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1950.50</td>
+<td align="right">41.00</td>
+<td align="right">1880.00</td>
+<td align="right">1915.00</td>
+<td align="right">1950.50</td>
+<td align="right">1986.00</td>
+<td align="right">2021.00</td>
+<td align="left">▇▇▇▇▇</td>
+</tr>
+<tr class="even">
+<td align="left">delta</td>
+<td align="right">4</td>
+<td align="right">1</td>
+<td align="right">0.08</td>
+<td align="right">0.47</td>
+<td align="right">-1.52</td>
+<td align="right">-0.24</td>
+<td align="right">-0.01</td>
+<td align="right">0.31</td>
+<td align="right">1.94</td>
+<td align="left">▁▆▇▂▁</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="plotting-information" class="section level2">
+<h2>Plotting Information</h2>
+<pre class="r"><code>#Creating date variables for the tidyweather dataset
+tidyweather &lt;- tidyweather %&gt;% 
+  mutate(date = ymd(paste(as.character(Year), month, &quot;1&quot;)), #Creating a column called date 
+         month = month(date, label=TRUE), #Converting month column into an ordered date factor
+         year = year(date)) #Converting the Year column into an ordered date factor
+
+#Plotting temperature by date
+ggplot(tidyweather, aes(x=date, y = delta))+  #Plotting delta by date
+  geom_point()+ #Scatterplot
+  geom_smooth(color=&quot;red&quot;) + #Adding a red trend line
+  theme_bw() + #theme
+  labs (#Adding a labels
+    title = &quot;Weather Anomalies&quot;,
+    x = &quot;Date&quot;,
+    y = &quot;Delta&quot;
+  ) +
+  NULL</code></pre>
+<p><img src="/blogs/homework2_files/figure-html/scatter_plot-1.png" width="648" style="display: block; margin: auto;" /></p>
+<div id="scatterplot-for-each-month-using-facet_wrap" class="section level3">
+<h3>Scatterplot for each month using facet_wrap()</h3>
+<pre class="r"><code>tidyweather %&gt;%
+  ggplot(aes(x=Year, y=delta)) + #Plotting delta by Year
+  geom_point() + #Scatterplot
+  geom_smooth(color=&quot;red&quot;) + #Adding a red trend line
+  theme_bw() + #theme
+  facet_wrap(~month) + #Creating separate graphs for each month
+  labs (#Adding a labels
+    title = &quot;Weather Anomalies per Month&quot;,
+    x = &quot;Year&quot;,
+    y = &quot;Delta&quot;
+  ) +
+  NULL</code></pre>
+<p><img src="/blogs/homework2_files/figure-html/facet_wrap-1.png" width="648" style="display: block; margin: auto;" /></p>
+<blockquote>
+<p>Answer below</p>
+</blockquote>
+<p>Although all of the graphs in the grid have a similar upwards trend, there are subtle differences in variability between months such as December/January and June/July. January is a month with much higher variability in weather while June does not. This is something that may be worth looking into for meteorologists.</p>
+</div>
+<div id="creating-an-interval-column-for-1881-1920-1921-1950-1951-1980-1981-2010" class="section level3">
+<h3>Creating an interval column for 1881-1920, 1921-1950, 1951-1980, 1981-2010</h3>
+<pre class="r"><code>comparison &lt;- tidyweather %&gt;% #New data frame called comparison
+  filter(Year&gt;= 1881) %&gt;%     #remove years prior to 1881
+  #create new variable &#39;interval&#39;, and assign values based on criteria below:
+  mutate(interval = case_when(
+    Year %in% c(1881:1920) ~ &quot;1881-1920&quot;,
+    Year %in% c(1921:1950) ~ &quot;1921-1950&quot;,
+    Year %in% c(1951:1980) ~ &quot;1951-1980&quot;,
+    Year %in% c(1981:2010) ~ &quot;1981-2010&quot;,
+    TRUE ~ &quot;2011-present&quot;
+  ))</code></pre>
+</div>
+<div id="density-plot-to-study-the-distribution-of-monthly-deviations-delta-grouped-by-intervals-we-are-interested-in" class="section level3">
+<h3>Density plot to study the distribution of monthly deviations (<code>delta</code>), grouped by intervals we are interested in</h3>
+<pre class="r"><code>ggplot(comparison, aes(x=delta, fill=interval)) +
+  geom_density(alpha=0.2) +   #density plot with tranparency set to 20%
+  theme_bw() +                #theme
+  labs (
+    title = &quot;Density Plot for Monthly Temperature Anomalies&quot;,
+    y     = &quot;Density&quot;         #changing y-axis label to sentence case
+  )</code></pre>
+<p><img src="/blogs/homework2_files/figure-html/density_plot-1.png" width="648" style="display: block; margin: auto;" /></p>
+</div>
+<div id="average-annual-anomalies" class="section level3">
+<h3>Average annual anomalies</h3>
+<pre class="r"><code>average_annual_anomaly &lt;- tidyweather %&gt;%
+  filter(!is.na(delta)) %&gt;% #Removing rows with NA&#39;s in the delta column 
+  group_by(Year) %&gt;% 
+  summarise(
+    annual_average_delta=mean(delta)) #New column annual_average_delta to calculate the mean delta by year 
+
+ggplot(average_annual_anomaly, aes(x=Year, y=annual_average_delta))+
+  geom_point() + #Scatterplot of annual_average_delta over the years
+  geom_smooth() + #Trend line
+  theme_bw() + #Theme
+  labs (
+    title = &quot;Average Yearly Anomaly&quot;, #Title 
+    y     = &quot;Average Annual Delta&quot; #y-axis label
+  ) +
+  NULL</code></pre>
+<p><img src="/blogs/homework2_files/figure-html/averaging-1.png" width="648" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="confidence-interval-for-delta" class="section level2">
+<h2>Confidence Interval for <code>delta</code></h2>
+<p><a href="https://earthobservatory.nasa.gov/world-of-change/decadaltemp.php">NASA points out on their website</a> that</p>
+<blockquote>
+<p>A one-degree global change is significant because it takes a vast amount of heat to warm all the oceans, atmosphere, and land by that much. In the past, a one- to two-degree drop was all it took to plunge the Earth into the Little Ice Age.</p>
+</blockquote>
+<p>Your task is to construct a confidence interval for the average annual delta since 2011, both using a formula and using a bootstrap simulation with the <code>infer</code> package. Recall that the dataframe <code>comparison</code> has already grouped temperature anomalies according to time intervals; we are only interested in what is happening between 2011-present.</p>
+<div id="confidence-interval-for-the-average-annual-delta-since-2011" class="section level3">
+<h3>Confidence interval for the average annual delta since 2011</h3>
+<pre class="r"><code>formula_ci &lt;- comparison %&gt;% 
+  group_by(interval) %&gt;%
+  # calculate mean, SD, count, SE, lower/upper 95% CI
+  summarise(
+    mean=mean(delta, na.rm=T), #mean
+    sd=sd(delta, na.rm=T), #standard deviation 
+    count=n(), #number of datapoints
+    se=sd/sqrt(count), #standard error
+    t_critical=qt(0.975, count-1), #t-critical using quantile function
+    lower=mean-t_critical*se, #lower end of CI
+    upper=mean+t_critical*se) %&gt;% #upper end of CI
+  # choose the interval 2011-present
+  filter(interval == &#39;2011-present&#39;)
+
+formula_ci</code></pre>
+<pre><code>## # A tibble: 1 x 8
+##   interval      mean    sd count     se t_critical lower upper
+##   &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt;  &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 2011-present  1.06 0.274   132 0.0239       1.98  1.01  1.11</code></pre>
+</div>
+<div id="bootstrap-simulation" class="section level3">
+<h3>Bootstrap Simulation</h3>
+<pre class="r"><code>boot_ci &lt;- comparison %&gt;%
+  group_by(interval) %&gt;%
+  filter(interval == &#39;2011-present&#39;) %&gt;%
+  specify(response=delta) %&gt;% #Setting delta as the response variable 
+  generate(reps=1000, type=&#39;bootstrap&#39;) %&gt;% #Repeating 1000 reps 
+  calculate(stat=&#39;mean&#39;) %&gt;% #Calculating mean 
+  get_confidence_interval(level=0.95, type=&#39;percentile&#39;) #Calculating confidence interval
+
+boot_ci</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   lower_ci upper_ci
+##      &lt;dbl&gt;    &lt;dbl&gt;
+## 1     1.01     1.11</code></pre>
+<blockquote>
+<p>Answer below</p>
+</blockquote>
+<p>We construct a 95% confidence interval both using the formula and a bootstrap simulation. The result shows that the true mean lies within the interval calculated with 95% confidence. The fact that this confidence interval does not contain zero shows that the difference between the means is statistically significant. Hence, using our result, we can conclude that the increase in temprature is statistically significant and that global warming is progressing.</p>
+</div>
+</div>
+</div>
+<div id="general-social-survey-gss" class="section level1">
+<h1>General Social Survey (GSS)</h1>
+<pre class="r"><code>gss &lt;- read_csv(&quot;smallgss2016.csv&quot;, 
+                na = c(&quot;&quot;, &quot;Don&#39;t know&quot;,
+                       &quot;No answer&quot;, &quot;Not applicable&quot;))</code></pre>
+<div id="instagram-and-snapchat-by-sex" class="section level2">
+<h2>Instagram and Snapchat, by sex</h2>
+<p>Can we estimate the <em>population</em> proportion of Snapchat or Instagram users in 2016?</p>
+<div id="creating-a-new-variable-snap_insta" class="section level3">
+<h3>Creating a new variable <code>snap_insta</code></h3>
+<pre class="r"><code>gss_clean &lt;- gss %&gt;%
+  mutate(
+    snap_insta=case_when(
+      snapchat == &#39;Yes&#39; | instagrm == &#39;Yes&#39; ~ &#39;Yes&#39;, #If one uses either SC or Instagram, return &#39;Yes&#39;
+      snapchat == &#39;NA&#39; &amp; instagrm == &#39;NA&#39; ~ &#39;NA&#39;, #If there is NA for both, return &#39;NA&#39;
+      T ~ &#39;No&#39; #Otherwise, return &#39;No&#39;
+      )
+  )
+gss_clean</code></pre>
+<pre><code>## # A tibble: 2,867 x 8
+##    emailmin emailhr snapchat instagrm twitter sex    degree         snap_insta
+##    &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;          &lt;chr&gt;     
+##  1 0        12      NA       NA       NA      Male   Bachelor       NA        
+##  2 30       0       No       No       No      Male   High school    No        
+##  3 NA       NA      No       No       No      Male   Bachelor       No        
+##  4 10       0       NA       NA       NA      Female High school    NA        
+##  5 NA       NA      Yes      Yes      No      Female Graduate       Yes       
+##  6 0        2       No       Yes      No      Female Junior college Yes       
+##  7 0        40      NA       NA       NA      Male   High school    NA        
+##  8 NA       NA      Yes      Yes      No      Female High school    Yes       
+##  9 0        0       NA       NA       NA      Male   High school    NA        
+## 10 NA       NA      No       No       No      Male   Junior college No        
+## # ... with 2,857 more rows</code></pre>
+</div>
+<div id="proportion-of-yess-for-snap_insta" class="section level3">
+<h3>Proportion of Yes’s for <code>snap_insta</code></h3>
+<pre class="r"><code>gss_clean %&gt;%
+  count(snap_insta, sort=T) %&gt;% #Calculate the total number of responses 
+  mutate(prop=n/sum(n)) #Calculate the proportion of Yes&#39;s and No&#39;s</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   snap_insta     n  prop
+##   &lt;chr&gt;      &lt;int&gt; &lt;dbl&gt;
+## 1 NA          1495 0.521
+## 2 No           858 0.299
+## 3 Yes          514 0.179</code></pre>
+</div>
+<div id="cis-of-snapinsta-usage-by-sex" class="section level3">
+<h3>CI’s of Snap/Insta usage by sex</h3>
+<pre class="r"><code>gss_clean %&gt;%
+  group_by(sex) %&gt;% 
+  count(snap_insta, sort=T) %&gt;% #Count of total of Yes&#39;s and No&#39;s by sex
+  mutate(prop=n/sum(n)) %&gt;% #Calculating the proportion by sex
+  filter(snap_insta == &#39;Yes&#39;) %&gt;% #Filter out the No&#39;s
+  summarise(
+    count=sum(n), #Total number per sex
+    se=sqrt(prop*(1-prop)/count), #Standard error
+    t_critical=qt(0.975, count-1), #T-critical 
+    lower=prop-t_critical*se, #Lower end of the CI
+    upper=prop+t_critical*se) #Upper end of the CI</code></pre>
+<pre><code>## # A tibble: 2 x 6
+##   sex    count     se t_critical  lower upper
+##   &lt;chr&gt;  &lt;int&gt;  &lt;dbl&gt;      &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+## 1 Female   322 0.0224       1.97 0.158  0.246
+## 2 Male     192 0.0258       1.97 0.0996 0.201</code></pre>
+</div>
+</div>
+<div id="twitter-by-education-level" class="section level2">
+<h2>Twitter, by education level</h2>
+<div id="creating-a-variable-for-degree-and-ordering-by-level" class="section level3">
+<h3>Creating a variable for degree and ordering by level</h3>
+<pre class="r"><code>gss &lt;- gss %&gt;%
+  mutate(
+    degree=factor(degree,
+                  levels=c(&quot;Lt high school&quot;, &quot;High school&quot;, &quot;Junior college&quot;, &quot;Bachelor&quot;, &quot;Graduate&quot;), 
+                  labels=c(&quot;Lt high school&quot;, &quot;High school&quot;, &quot;Junior college&quot;, &quot;Bachelor&quot;, &quot;Graduate&quot;)))</code></pre>
+</div>
+<div id="creating-a-new-variable-bachelor_graduate" class="section level3">
+<h3>Creating a new variable ‘bachelor_graduate’</h3>
+<pre class="r"><code>gss_edu &lt;- gss %&gt;%
+  mutate(
+    bachelor_graduate=case_when(
+      degree %in% c(&#39;Bachelor&#39;, &quot;Graduate&quot;) ~ &#39;Yes&#39;, #If degree is Bachelor or Graduate, return &#39;Yes&#39;
+      degree == &#39;NA&#39; ~ &#39;NA&#39;, #If degree is NA, return NA
+      T ~ &#39;No&#39; #Otherwise, No
+      )
+  )</code></pre>
+</div>
+<div id="proportion-of-bachelor_graduate-who-use-twitter" class="section level3">
+<h3>Proportion of bachelor_graduate who use Twitter</h3>
+<pre class="r"><code>gss_edu %&gt;% 
+  filter(bachelor_graduate == &#39;Yes&#39;, twitter != &#39;NA&#39;) %&gt;% #Filtering out rows with No&#39;s and NA&#39;s in the &#39;bachelor_graduate&#39; column and NA&#39;s in the Twitter column
+  count(twitter, sort=T) %&gt;% #Calculating the total Yes&#39;s and No&#39;s of twitter usage
+  mutate(prop=n/sum(n)) #Calculating the proportion of Yes&#39;s and No&#39;s over total</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   twitter     n  prop
+##   &lt;chr&gt;   &lt;int&gt; &lt;dbl&gt;
+## 1 No        375 0.767
+## 2 Yes       114 0.233</code></pre>
+</div>
+<div id="confidence-intervals-for-bachelor_graduate-and-twitter-usage" class="section level3">
+<h3>Confidence intervals for bachelor_graduate and Twitter usage</h3>
+<pre class="r"><code>gss_edu %&gt;%
+  group_by(twitter) %&gt;% 
+  count(bachelor_graduate, sort=T) %&gt;% #Number of Twitter users by bachelor_graduate status 
+  mutate(prop=n/sum(n)) %&gt;% #Calculating the proportion of Twitter users and non-users 
+  filter(bachelor_graduate == &#39;Yes&#39;, twitter != &#39;NA&#39;) %&gt;% #Filter out bachelor_graduate == &#39;No&#39; and NA&#39;s 
+  summarise(
+    count=sum(n), #Total number per Twitter usage status
+    se=sqrt(prop*(1-prop)/count), #Standard error
+    t_critical=qt(0.975, count-1), #T-critical value
+    lower=prop-t_critical*se, #Lower end of the CI
+    upper=prop+t_critical*se)#Upper end of the CI</code></pre>
+<pre><code>## # A tibble: 2 x 6
+##   twitter count     se t_critical lower upper
+##   &lt;chr&gt;   &lt;int&gt;  &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 No        375 0.0244       1.97 0.288 0.384
+## 2 Yes       114 0.0466       1.98 0.355 0.539</code></pre>
+<div id="do-these-two-confidence-intervals-overlap" class="section level4">
+<h4>Do these two Confidence Intervals overlap?</h4>
+<blockquote>
+<p>Answer below</p>
+</blockquote>
+<p>Yes, they over lap from 0.355 to 0.384.</p>
+</div>
+</div>
+</div>
+<div id="email-usage" class="section level2">
+<h2>Email usage</h2>
+<p>Can we estimate the <em>population</em> parameter on time spent on email weekly?</p>
+<div id="new-variable-email-combining-emailhr-and-emailmin" class="section level3">
+<h3>New variable ‘email’ combining ‘emailhr’ and ‘emailmin’</h3>
+<pre class="r"><code>gss &lt;- gss %&gt;%
+  mutate(
+    emailhr=if_else(emailhr == &#39;NA&#39;, 0, as.numeric(emailhr)), #Variable emailhr is 0 if emailhr is &#39;NA&#39;, otherwise input the value in the original column as a number 
+    emailmin=if_else(emailmin == &#39;NA&#39;, 0, as.numeric(emailmin)), #Variable emailmin is 0 if emailmin is &#39;NA&#39;, otherwise input the value in the original column as a number 
+    email=emailhr*60+emailmin) #New variable email that combines emailhr and emailmin for total number of minutes spent on emails
+gss</code></pre>
+<pre><code>## # A tibble: 2,867 x 8
+##    emailmin emailhr snapchat instagrm twitter sex    degree         email
+##       &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;  &lt;fct&gt;          &lt;dbl&gt;
+##  1        0      12 NA       NA       NA      Male   Bachelor         720
+##  2       30       0 No       No       No      Male   High school       30
+##  3        0       0 No       No       No      Male   Bachelor           0
+##  4       10       0 NA       NA       NA      Female High school       10
+##  5        0       0 Yes      Yes      No      Female Graduate           0
+##  6        0       2 No       Yes      No      Female Junior college   120
+##  7        0      40 NA       NA       NA      Male   High school     2400
+##  8        0       0 Yes      Yes      No      Female High school        0
+##  9        0       0 NA       NA       NA      Male   High school        0
+## 10        0       0 No       No       No      Male   Junior college     0
+## # ... with 2,857 more rows</code></pre>
+</div>
+<div id="density-plot-and-summary-statistics-of-distribution" class="section level3">
+<h3>Density plot and summary statistics of distribution</h3>
+<p>Visualise the distribution of this new variable. Find the mean and the median number of minutes respondents spend on email weekly. Is the mean or the median a better measure of the typical amoung of time Americans spend on email weekly? Why?</p>
+<pre class="r"><code>#Density plot for the hours spent on emails weekly
+gss %&gt;%
+  ggplot(aes(x=email)) +
+  geom_density() +
+  labs(title=&quot;Density plot for hours spent on email weekly&quot;, x=&quot;Hours spent on email weekly&quot;, y=&quot;Density&quot;) +
+  NULL</code></pre>
+<p><img src="/blogs/homework2_files/figure-html/unnamed-chunk-9-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Summary statistics of hours spent on emails weekly
+gss %&gt;%
+  summarise(
+    mean=mean(email), #Mean time spent on emails weekly
+    median=median(email),#Median time spent on emails weekly
+    sd=sd(email),#Standard deviation of time spent on emails weekly
+    min=min(email),#Minimum time spent on emails weekly
+    max=max(email)#Maximum time spent on emails weekly
+  )</code></pre>
+<pre><code>## # A tibble: 1 x 5
+##    mean median    sd   min   max
+##   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1  240.      0  555.     0  6000</code></pre>
+<blockquote>
+<p>Answer below</p>
+</blockquote>
+<p>The median is better representative of our dataset as data is heavily skewed as can be seen in standard deviation.</p>
+</div>
+<div id="confidence-interval-for-the-mean-amount-of-time-americans-spend-on-emails-weekly" class="section level3">
+<h3>Confidence interval for the mean amount of time Americans spend on emails weekly</h3>
+<pre class="r"><code>set.seed(2) 
+
+email_boot_ci &lt;- gss %&gt;%
+  specify(response=email) %&gt;% #Setting the email column as the response variable
+  generate(reps=1000, type=&#39;bootstrap&#39;) %&gt;% #Repeating 1000 reps
+  calculate(stat=&#39;mean&#39;) %&gt;%  #Calculating the mean
+  get_confidence_interval(level=0.95, type=&#39;percentile&#39;) %&gt;% #Creating the 95% confidence interval 
+  mutate(
+    lower_ci=paste(trunc(lower_ci/60), &#39;hr&#39;,  trunc(lower_ci%%60), &#39;minutes&#39;), #Lower end of the confidence interval in hours and minutes
+    upper_ci=paste(trunc(upper_ci/60), &#39;hr&#39;, trunc(upper_ci%%60), &#39;minutes&#39;)#Upper end of the confidence interval in hours and minutes
+  )
+email_boot_ci</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   lower_ci        upper_ci       
+##   &lt;chr&gt;           &lt;chr&gt;          
+## 1 3 hr 38 minutes 4 hr 21 minutes</code></pre>
+<blockquote>
+<p>Answer below</p>
+</blockquote>
+<p>From our perspective as students and hopeful white collar workers, the expected distribution would have been more uniform or normally distributed. However, as we can see from the graph, it is heavily skewed to the right. The fact that there are many people who spend little to no time on emails throughout the week which causes there to be skewness to the right proves that there are people with occupations and or lifestyles where checking emails is not a routine. This includes blue collar workers and the elderly population.</p>
+<blockquote>
+<p>Answer below</p>
+</blockquote>
+<p>We would expect the 99% confidence interval to be wider because our confidence level that the mean is within that interval is higher than 95%. Logically, there is a higher chance of the mean landing in a wider interval than its narrower counterpart.</p>
+</div>
+</div>
+</div>
+<div id="bidens-approval-margins" class="section level1">
+<h1>Biden’s Approval Margins</h1>
+<pre class="r"><code># Import approval polls data directly off fivethirtyeight website
+approval_polllist &lt;- read_csv(&#39;https://projects.fivethirtyeight.com/biden-approval-data/approval_polllist.csv&#39;) 
+glimpse(approval_polllist)</code></pre>
+<pre><code>## Rows: 1,598
+## Columns: 22
+## $ president           &lt;chr&gt; &quot;Joseph R. Biden Jr.&quot;, &quot;Joseph R. Biden Jr.&quot;, &quot;Jos~
+## $ subgroup            &lt;chr&gt; &quot;All polls&quot;, &quot;All polls&quot;, &quot;All polls&quot;, &quot;All polls&quot;~
+## $ modeldate           &lt;chr&gt; &quot;9/16/2021&quot;, &quot;9/16/2021&quot;, &quot;9/16/2021&quot;, &quot;9/16/2021&quot;~
+## $ startdate           &lt;chr&gt; &quot;1/31/2021&quot;, &quot;1/31/2021&quot;, &quot;2/1/2021&quot;, &quot;2/1/2021&quot;, ~
+## $ enddate             &lt;chr&gt; &quot;2/2/2021&quot;, &quot;2/2/2021&quot;, &quot;2/3/2021&quot;, &quot;2/3/2021&quot;, &quot;2~
+## $ pollster            &lt;chr&gt; &quot;Rasmussen Reports/Pulse Opinion Research&quot;, &quot;YouGo~
+## $ grade               &lt;chr&gt; &quot;B&quot;, &quot;B+&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B-&quot;, &quot;B&quot;, &quot;B&quot;, &quot;A-&quot;, &quot;B&quot;, &quot;B~
+## $ samplesize          &lt;dbl&gt; 1500, 1500, 1500, 15000, 1005, 1500, 15000, 1429, ~
+## $ population          &lt;chr&gt; &quot;lv&quot;, &quot;a&quot;, &quot;lv&quot;, &quot;a&quot;, &quot;a&quot;, &quot;lv&quot;, &quot;a&quot;, &quot;a&quot;, &quot;a&quot;, &quot;l~
+## $ weight              &lt;dbl&gt; 0.3225, 1.0856, 0.3025, 0.2786, 0.8741, 0.2857, 0.~
+## $ influence           &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,~
+## $ approve             &lt;dbl&gt; 51, 46, 52, 54, 57, 49, 54, 49, 54, 50, 54, 60, 51~
+## $ disapprove          &lt;dbl&gt; 47, 38, 46, 33, 34, 48, 34, 39, 34, 47, 34, 32, 46~
+## $ adjusted_approve    &lt;dbl&gt; 53.3, 47.3, 54.3, 52.5, 55.8, 51.3, 52.5, 49.7, 52~
+## $ adjusted_disapprove &lt;dbl&gt; 41.0, 38.3, 40.0, 36.3, 35.1, 42.0, 37.3, 39.1, 37~
+## $ multiversions       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
+## $ tracking            &lt;lgl&gt; TRUE, NA, TRUE, TRUE, NA, TRUE, TRUE, NA, TRUE, TR~
+## $ url                 &lt;chr&gt; &quot;https://www.rasmussenreports.com/public_content/p~
+## $ poll_id             &lt;dbl&gt; 74333, 74332, 74338, 74366, 74345, 74347, 74367, 7~
+## $ question_id         &lt;dbl&gt; 139595, 139593, 139642, 139733, 139652, 139654, 13~
+## $ createddate         &lt;chr&gt; &quot;2/3/2021&quot;, &quot;2/3/2021&quot;, &quot;2/4/2021&quot;, &quot;2/11/2021&quot;, &quot;~
+## $ timestamp           &lt;chr&gt; &quot;14:39:16 16 Sep 2021&quot;, &quot;14:39:16 16 Sep 2021&quot;, &quot;1~</code></pre>
+<pre class="r"><code># Use `lubridate` to fix dates, as they are given as characters.
+approval_polllist &lt;- approval_polllist %&gt;%
+  mutate(
+    modeldate=mdy(modeldate), 
+    startdate=mdy(startdate),
+    enddate=mdy(enddate),
+    createddate=mdy(createddate)
+  )
+
+glimpse(approval_polllist)</code></pre>
+<pre><code>## Rows: 1,598
+## Columns: 22
+## $ president           &lt;chr&gt; &quot;Joseph R. Biden Jr.&quot;, &quot;Joseph R. Biden Jr.&quot;, &quot;Jos~
+## $ subgroup            &lt;chr&gt; &quot;All polls&quot;, &quot;All polls&quot;, &quot;All polls&quot;, &quot;All polls&quot;~
+## $ modeldate           &lt;date&gt; 2021-09-16, 2021-09-16, 2021-09-16, 2021-09-16, 2~
+## $ startdate           &lt;date&gt; 2021-01-31, 2021-01-31, 2021-02-01, 2021-02-01, 2~
+## $ enddate             &lt;date&gt; 2021-02-02, 2021-02-02, 2021-02-03, 2021-02-03, 2~
+## $ pollster            &lt;chr&gt; &quot;Rasmussen Reports/Pulse Opinion Research&quot;, &quot;YouGo~
+## $ grade               &lt;chr&gt; &quot;B&quot;, &quot;B+&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B-&quot;, &quot;B&quot;, &quot;B&quot;, &quot;A-&quot;, &quot;B&quot;, &quot;B~
+## $ samplesize          &lt;dbl&gt; 1500, 1500, 1500, 15000, 1005, 1500, 15000, 1429, ~
+## $ population          &lt;chr&gt; &quot;lv&quot;, &quot;a&quot;, &quot;lv&quot;, &quot;a&quot;, &quot;a&quot;, &quot;lv&quot;, &quot;a&quot;, &quot;a&quot;, &quot;a&quot;, &quot;l~
+## $ weight              &lt;dbl&gt; 0.3225, 1.0856, 0.3025, 0.2786, 0.8741, 0.2857, 0.~
+## $ influence           &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,~
+## $ approve             &lt;dbl&gt; 51, 46, 52, 54, 57, 49, 54, 49, 54, 50, 54, 60, 51~
+## $ disapprove          &lt;dbl&gt; 47, 38, 46, 33, 34, 48, 34, 39, 34, 47, 34, 32, 46~
+## $ adjusted_approve    &lt;dbl&gt; 53.3, 47.3, 54.3, 52.5, 55.8, 51.3, 52.5, 49.7, 52~
+## $ adjusted_disapprove &lt;dbl&gt; 41.0, 38.3, 40.0, 36.3, 35.1, 42.0, 37.3, 39.1, 37~
+## $ multiversions       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA~
+## $ tracking            &lt;lgl&gt; TRUE, NA, TRUE, TRUE, NA, TRUE, TRUE, NA, TRUE, TR~
+## $ url                 &lt;chr&gt; &quot;https://www.rasmussenreports.com/public_content/p~
+## $ poll_id             &lt;dbl&gt; 74333, 74332, 74338, 74366, 74345, 74347, 74367, 7~
+## $ question_id         &lt;dbl&gt; 139595, 139593, 139642, 139733, 139652, 139654, 13~
+## $ createddate         &lt;date&gt; 2021-02-03, 2021-02-03, 2021-02-04, 2021-02-11, 2~
+## $ timestamp           &lt;chr&gt; &quot;14:39:16 16 Sep 2021&quot;, &quot;14:39:16 16 Sep 2021&quot;, &quot;1~</code></pre>
+<div id="create-a-plot" class="section level2">
+<h2>Create a plot</h2>
+<pre class="r"><code>knitr::include_graphics(&quot;../images/biden_approval_margin.png&quot;, error = FALSE)</code></pre>
+<p><img src="../images/biden_approval_margin.png" width="100%" style="display: block; margin: auto;" /></p>
+<div id="replicating-the-biden-approval-margin-graph" class="section level3">
+<h3>Replicating the Biden Approval Margin graph</h3>
+<pre class="r"><code>plot &lt;- approval_polllist %&gt;%
+  mutate(week=week(enddate)) %&gt;% #Creating a new column called week by extracting the week from the enddate variable
+  group_by(week) %&gt;%
+  mutate(
+    net_approval_rate=approve-disapprove #Creating a new column called net_approval_rate by subtracting disapprove from approve
+  ) %&gt;%
+  summarise(
+    mean=mean(net_approval_rate), #Mean net approval by week
+    sd=sd(net_approval_rate), #Standard deviation of net approval by week
+    count=n(), #Count by week
+    se=sd/sqrt(count), #Standard error of the week 
+    t_critical=qt(0.975, count-1), #T-critical value
+    lower=mean-t_critical*se, #Lower end of the CI
+    upper=mean+t_critical*se #Upper end of the CI
+  ) %&gt;%
+  
+  #Scatterplot of the calculated net approval rate means by week 
+  ggplot(aes(x=week, y=mean)) + 
+  geom_point(colour=&#39;red&#39;) + #Scatterplot using red points
+  geom_line(colour=&#39;red&#39;, size=0.25) + #Adding a red line to connect the points
+  geom_ribbon(aes(ymin=lower, ymax=upper), colour=&#39;red&#39;, linetype=1, alpha=0.1, size=0.25) +
+  geom_smooth(se=F) + #Adding a smooth line for the trend
+  geom_hline(yintercept=0, color=&#39;orange&#39;, size=2) + #Adding an orange horizontal line
+  theme_bw() + #Theme
+  labs(title=&#39;Estimating Approval Margin (approve-disapprove) for Joe Biden&#39;, #Adding a title
+       subtitle=&#39;Weekly average of all polls&#39;, #Subtitle
+       x=&#39;Week of the year&#39;, #X-label
+       y=&#39;Average Approval Margin (Approve - Disapprove)&#39;) + #Y-label
+  NULL
+
+ggsave(file=&#39;biden_plot.png&#39;, plot=plot, width=12, height=8) #Saving to adjust image width
+knitr::include_graphics(&quot;biden_plot.png&quot;, error=F)</code></pre>
+<p><img src="biden_plot.png" width="1800" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="compare-confidence-intervals" class="section level2">
+<h2>Compare Confidence Intervals</h2>
+<blockquote>
+<p>Answer below</p>
+</blockquote>
+<p>The confidence interval for ‘week 4’ ranges from 9.14 to 19.6828 with a mean of 14.41 and standard deviation of 10.25, while ‘week 25’ ranges from 10.30 to 12.7523 with a mean of 11.53 and a standard deviation of 4.74. This is mainly due to the number of data points. For ‘week 4’ we only have 17 data points to work with, while ‘week 25’ has 60. With a larger set of data to work with, we are able to create narrower intervals with the same level of confidence.</p>
+</div>
+</div>
+<div id="gapminder-revisited" class="section level1">
+<h1>Gapminder revisited</h1>
+<pre class="r"><code># load gapminder HIV data
+hiv &lt;- read_csv(&quot;adults_with_hiv_percent_age_15_49.csv&quot;)
+life_expectancy &lt;- read_csv(&quot;life_expectancy_years.csv&quot;)
+
+# get World bank data using wbstats
+indicators &lt;- c(&quot;SP.DYN.TFRT.IN&quot;,&quot;SE.PRM.NENR&quot;, &quot;SH.DYN.MORT&quot;, &quot;NY.GDP.PCAP.KD&quot;)
+
+library(wbstats)
+
+worldbank_data &lt;- wb_data(country=&quot;countries_only&quot;, #countries only- no aggregates like Latin America, Europe, etc.
+                          indicator = indicators, 
+                          start_date = 1960, 
+                          end_date = 2016)
+
+# get a dataframe of information regarding countries, indicators, sources, regions, indicator topics, lending types, income levels,  from the World Bank API 
+countries &lt;- wbstats::wb_cachelist$countries</code></pre>
+<div id="joining-the-3-dataframes" class="section level2">
+<h2>Joining the 3 dataframes</h2>
+<pre class="r"><code>#Tidying the gapminder HIV data
+hiv_long &lt;- hiv %&gt;%
+  pivot_longer(cols=2:34, names_to=&#39;year&#39;, values_to=&#39;hiv&#39;) %&gt;% #Move all years to a new column called &#39;year&#39; and the values to a new column called &#39;hiv&#39;
+  mutate(year=as.numeric(year)) #Read &#39;year&#39; as number
+
+#Tidying the life expectancy data
+life_expectancy_long &lt;- life_expectancy %&gt;%
+  pivot_longer(cols=2:302, names_to=&#39;year&#39;, values_to=&#39;lifeExp&#39;) %&gt;% #Move all years to a new column called &#39;year&#39; and the values to a new column called &#39;lifeExp&#39;
+  mutate(year=as.numeric(year)) #Read &#39;year&#39; as number
+
+#Tidying World bank data from wbstats
+worldbank_data_pretty_much_long &lt;- worldbank_data %&gt;%
+  select(-iso2c, -iso3c) %&gt;% #Delete &#39;-iso2c&#39; and &#39;-iso3c&#39;
+  rename(year=date) #Rename date as year 
+
+data_join &lt;- hiv_long %&gt;%
+  inner_join(life_expectancy_long, by=c(&#39;country&#39;, &#39;year&#39;)) %&gt;%#joining hiv_long with life_expectancy_long 
+  full_join(worldbank_data_pretty_much_long, by=c(&#39;country&#39;, &#39;year&#39;)) #joining the new data set above with the worldbank_data_pretty_much_long data set 
+
+data_join</code></pre>
+<pre><code>## # A tibble: 12,732 x 8
+##    country      year   hiv lifeExp NY.GDP.PCAP.KD SE.PRM.NENR SH.DYN.MORT
+##    &lt;chr&gt;       &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;          &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;
+##  1 Afghanistan  1979    NA    44.4             NA          NA        248.
+##  2 Afghanistan  1980    NA    44.1             NA          NA        242.
+##  3 Afghanistan  1981    NA    44.9             NA          NA        235.
+##  4 Afghanistan  1982    NA    44.6             NA          NA        229.
+##  5 Afghanistan  1983    NA    42.8             NA          NA        222.
+##  6 Afghanistan  1984    NA    40.5             NA          NA        216.
+##  7 Afghanistan  1985    NA    42.4             NA          NA        209.
+##  8 Afghanistan  1986    NA    43.4             NA          NA        203.
+##  9 Afghanistan  1987    NA    45.5             NA          NA        196.
+## 10 Afghanistan  1988    NA    47.9             NA          NA        190.
+## # ... with 12,722 more rows, and 1 more variable: SP.DYN.TFRT.IN &lt;dbl&gt;</code></pre>
+<div id="the-reasoning-behind-our-join-operation-choices" class="section level3">
+<h3>The reasoning behind our join operation choices</h3>
+<blockquote>
+<p>Answer below</p>
+</blockquote>
+<p>The inner_join operation joins two data sets by matching common identifiers between the data sets and eliminating all data points that do not match. On the other hand, full_join also matches common identifiers but maintains all data points that do not exist in the smaller data set. The reason why we used inner_join to join hiv_long and life_expectancy is because we need the data on hiv to match that of life expectancy to create the graph on HIV prevalence and life expectancy as shown below. We needed to use full_join instead of inner_join to include the world bank data, however, because we must look at the relationship between fertility rate and GDP per capita in the later questions and both columns belong to the world bank data. Since we dont want to reduce the data available in the world bank data to that of HIV and life expectancy, which have less countries and smaller time frame, we must use full_join.</p>
+</div>
+</div>
+<div id="scatterplot-of-the-relationship-between-hiv-prevalence-and-life-expectancy" class="section level2">
+<h2>Scatterplot of the relationship between HIV prevalence and life expectancy</h2>
+<pre class="r"><code>data_join %&gt;%
+  mutate(region=countrycode(country, origin=&#39;country.name&#39;, destination=&#39;region&#39;)) %&gt;% #Extracting region from country name and creating a new column called &#39;region&#39;
+  filter(year &gt;= 1970) %&gt;% #Filter all years beyond 1970
+  mutate(
+    decadeStart=year%/%10*10, 
+    interval=paste(decadeStart, &#39;-&#39;, decadeStart+9)) %&gt;% #Creating a new column called &#39;interval&#39; for decades 
+  select(-decadeStart) %&gt;% #Deleting decadeStart column
+  ggplot(aes(x=hiv, y=lifeExp)) + #Creating a scatterplot for hiv and lifeExp
+  geom_point(alpha=0.25) + #Creating see through points
+  geom_smooth(se=F) + #Adding a smooth line
+  facet_wrap(~region, scales=&#39;free&#39;) + #Creating different graphs for every region
+  labs(title=&quot;Relationship between HIV prevalence and life expectancy by region&quot;, x=&quot;HIV prevalence&quot;, y=&quot;Life expectancy&quot;) +
+  NULL</code></pre>
+<p><img src="/blogs/homework2_files/figure-html/unnamed-chunk-14-1.png" width="648" style="display: block; margin: auto;" /></p>
+<blockquote>
+<p>Answer below</p>
+</blockquote>
+<p>Although, the plots may look confusing, we can argue that the data is concentrated towards to top left corner which means times with less HIV prevalence have higher life expectancy overall. We are able to see this trend strongly for regions such as Latin America &amp; the Caribbeans and Middle East and Africa. However, in developed regions the trends are not as obvious and there is large variability in all regions due to confounding variables such as other means by which people die early, such as car crashes and other diseases.</p>
+</div>
+<div id="scatterplot-of-the-relationship-between-fertility-rate-and-gdp-per-capita" class="section level2">
+<h2>Scatterplot of the relationship between fertility rate and GDP per capita</h2>
+<pre class="r"><code>data_join %&gt;%
+  mutate(region=countrycode(country, origin=&#39;country.name&#39;, destination=&#39;region&#39;)) %&gt;% #Extracting region from country name and creating a new column called &#39;region&#39;
+  ggplot(aes(x=SP.DYN.TFRT.IN, y=NY.GDP.PCAP.KD)) + #Scatterplot of fertility rate and GDP per capita 
+  geom_point(alpha=0.25) +  #Creating see through points
+  geom_smooth(se=F) + #Adding a smooth line
+  facet_wrap(~region, scales=&#39;free&#39;) + #Creating different graphs for every region
+  labs(title=&quot;Relationship between fertility rate and GDP per capita by region&quot;, x=&quot;Fertility rate&quot;, y=&quot;GDP per capita&quot;) +
+  NULL</code></pre>
+<p><img src="/blogs/homework2_files/figure-html/unnamed-chunk-15-1.png" width="648" style="display: block; margin: auto;" /></p>
+<blockquote>
+<p>Answer below</p>
+</blockquote>
+<p>We see a negative correlation between fertility rate and GDP per capita overall, meaning lower fertility signifies higher GDP per capita. This relationship is strong in regions such as East Asia, which makes sense because East Asia has a mix of development levels and high variation in fertility rate (ex: Japan has low fertility rate and high GDP per capita while the Philippines has higher fertility rate and lower GDP per capita). On the other hand, the pattern is less pronounced in regions such as Middle East and Africa where most countries have high fertility and low GDP per capita.</p>
+</div>
+<div id="count-of-countries-with-missing-hiv-data" class="section level2">
+<h2>Count of countries with missing HIV data</h2>
+<pre class="r"><code>hiv_long %&gt;%
+  filter(is.na(hiv)) %&gt;% #Filter out all countries with data 
+  mutate(region=countrycode(country, origin=&#39;country.name&#39;, destination=&#39;region23&#39;)) %&gt;% #Extracting region from country name and creating a new column called &#39;region&#39;
+  group_by(region) %&gt;% 
+  count() %&gt;% #Count by region
+  ggplot() +
+  geom_col(aes(x=n, y=reorder(region, n))) + #Bar plot of count per region
+  labs(title=&quot;Missing HIV data&quot;, x=&quot;Count&quot;, y=&quot;Regions&quot;) +
+  NULL</code></pre>
+<p><img src="/blogs/homework2_files/figure-html/unnamed-chunk-16-1.png" width="648" style="display: block; margin: auto;" /></p>
+</div>
+<div id="mortality-rate-for-under-5-by-region-over-time-and-top-5-countries-with-the-greatest-improvement" class="section level2">
+<h2>Mortality rate for under 5 by region over time and top 5 countries with the greatest improvement</h2>
+<pre class="r"><code>#Tidying data set
+mortality &lt;- worldbank_data_pretty_much_long %&gt;%
+  filter(!is.na(SH.DYN.MORT)) %&gt;% #Filtering out the NA&#39;s
+  select(-NY.GDP.PCAP.KD, -SE.PRM.NENR, -SP.DYN.TFRT.IN) %&gt;% #Getting rid of -NY.GDP.PCAP.KD, -SE.PRM.NENR and -SP.DYN.TFRT.IN
+  mutate(region=countrycode(country, origin=&#39;country.name&#39;, destination=&#39;region&#39;)) #Extracting region from country name and creating a new column called &#39;region&#39;
+
+#Cleaning 
+mortality_clean &lt;- mortality %&gt;% 
+  group_by(country) %&gt;%
+  summarize(
+    startyear=min(year), #Extracting the mininum year as start year
+    endyear=max(year)) %&gt;% #Extracting the maximum year end year
+  right_join(mortality, by=&#39;country&#39;) %&gt;% #Joining mortality data set with the summarized table 
+  mutate(
+    startmort=if_else(year == startyear, SH.DYN.MORT, 0), #new column called &#39;startmort&#39;
+    endmort=if_else(year == endyear, SH.DYN.MORT, 0)) %&gt;% #new column called &#39;endmort&#39;
+  filter(startmort &gt; 0 | endmort &gt; 0) %&gt;% #Filtering for startmort &gt; 0 and endmort &gt; 0 
+  select(country, region, startmort, endmort) %&gt;% #Extracting the 4 columns
+  group_by(country, region) %&gt;%
+  summarise(
+    startmort=max(startmort), #maximum mortality at the beginning 
+    endmort=max(endmort) #maximum mortality at the end 
+  ) %&gt;%
+  mutate(change=(startmort-endmort)/startmort*100) %&gt;% #Creating a new column called &#39;change&#39; to see how much mortality rate has changed over the years 
+  group_by(region)
+
+mortality_clean %&gt;%
+  slice_max(order_by=change, n=5) #Extracting the top 5 per region</code></pre>
+<pre><code>## # A tibble: 32 x 5
+## # Groups:   region [7]
+##    country     region                startmort endmort change
+##    &lt;chr&gt;       &lt;chr&gt;                     &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;
+##  1 Korea, Rep. East Asia &amp; Pacific       112.      3.4   97.0
+##  2 Singapore   East Asia &amp; Pacific        47.7     2.7   94.3
+##  3 Japan       East Asia &amp; Pacific        39.7     2.7   93.2
+##  4 Thailand    East Asia &amp; Pacific       146.     10.3   93.0
+##  5 China       East Asia &amp; Pacific       118.      9.9   91.6
+##  6 Portugal    Europe &amp; Central Asia     114.      3.6   96.9
+##  7 Turkey      Europe &amp; Central Asia     257.     12.1   95.3
+##  8 Italy       Europe &amp; Central Asia      51.9     3.4   93.4
+##  9 Cyprus      Europe &amp; Central Asia      38.2     2.6   93.2
+## 10 Poland      Europe &amp; Central Asia      65.1     4.7   92.8
+## # ... with 22 more rows</code></pre>
+<pre class="r"><code>mortality_clean %&gt;%
+  slice_min(order_by=change, n=5) #Extracting the lowest 5 per region</code></pre>
+<pre><code>## # A tibble: 32 x 5
+## # Groups:   region [7]
+##    country                   region                startmort endmort change
+##    &lt;chr&gt;                     &lt;chr&gt;                     &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;
+##  1 Micronesia, Fed. Sts.     East Asia &amp; Pacific        56.5    32.5   42.5
+##  2 Korea, Dem. People&#39;s Rep. East Asia &amp; Pacific        35.1    20     43.0
+##  3 Palau                     East Asia &amp; Pacific        36.4    19.1   47.5
+##  4 Nauru                     East Asia &amp; Pacific        74.1    33.9   54.3
+##  5 Tuvalu                    East Asia &amp; Pacific        80.5    26.4   67.2
+##  6 Monaco                    Europe &amp; Central Asia       9.7     3.4   64.9
+##  7 Turkmenistan              Europe &amp; Central Asia     133.     42.2   68.2
+##  8 Slovak Republic           Europe &amp; Central Asia      21.6     6.1   71.8
+##  9 Ukraine                   Europe &amp; Central Asia      33.8     9.2   72.8
+## 10 Moldova                   Europe &amp; Central Asia      64.1    15.3   76.1
+## # ... with 22 more rows</code></pre>
+</div>
+<div id="scatterplot-of-the-relationship-between-primary-school-enrollment-and-fertility-rate" class="section level2">
+<h2>Scatterplot of the relationship between primary school enrollment and fertility rate</h2>
+<pre class="r"><code>worldbank_data_pretty_much_long %&gt;%
+  mutate(
+    region=countrycode(country, origin=&#39;country.name&#39;, destination=&#39;region&#39;), #Extracting region from country name and creating a new column called &#39;region&#39;
+    schoolSkip=100-SE.PRM.NENR) %&gt;% #New column for inverted school enrollment called &#39;schoolSkip&#39;
+  ggplot(aes(x=SP.DYN.TFRT.IN, y=schoolSkip)) + #Scatterplot for fertility and inverted school enrollment
+  geom_point() + 
+  geom_smooth(se=F) + #Adding a smooth line
+  facet_wrap(~region) + #Creating different graphs for each region
+  labs(x=&quot;Fertility rate&quot;, y=&quot;School non-enrollment rate&quot;, title=&quot;Relationship between fertility rate and school non-enrollment by region&quot;) + #Labeling x-axis and y-axis
+  NULL</code></pre>
+<p><img src="/blogs/homework2_files/figure-html/unnamed-chunk-18-1.png" width="648" style="display: block; margin: auto;" /></p>
+<blockquote>
+<p>Answer below</p>
+</blockquote>
+<p>There is a strong positive relationship between school non-attendance and fertility rate for South Asia and Latin America and the Caribbeans. This is not the case for developed regions such as Europe where most countries have lower fertility and higher school attendance rates.</p>
+</div>
+</div>
+<div id="challenge-1-excess-rentals-in-tfl-bike-sharing" class="section level1">
+<h1>Challenge 1: Excess rentals in TfL bike sharing</h1>
+<div id="load-and-clean-the-latest-tfl-data" class="section level3">
+<h3>Load and clean the latest Tfl data</h3>
+<pre class="r"><code>url &lt;- &quot;https://data.london.gov.uk/download/number-bicycle-hires/ac29363e-e0cb-47cc-a97a-e216d900a6b0/tfl-daily-cycle-hires.xlsx&quot;
+
+# Download TFL data to temporary file
+httr::GET(url, write_disk(bike.temp &lt;- tempfile(fileext = &quot;.xlsx&quot;)))</code></pre>
+<pre><code>## Response [https://airdrive-secure.s3-eu-west-1.amazonaws.com/london/dataset/number-bicycle-hires/2021-08-23T14%3A32%3A29/tfl-daily-cycle-hires.xlsx?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAJJDIMAIVZJDICKHA%2F20210916%2Feu-west-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20210916T223409Z&amp;X-Amz-Expires=300&amp;X-Amz-Signature=b08a1eaeff9c10b50f5d0e371f8b30a78c55e8492169f9f027a5a3706f28d8b1&amp;X-Amz-SignedHeaders=host]
+##   Date: 2021-09-16 22:34
+##   Status: 200
+##   Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+##   Size: 173 kB
+## &lt;ON DISK&gt;  C:\Users\hanlu\AppData\Local\Temp\RtmpwV8zfy\file15f077a928eb.xlsx</code></pre>
+<pre class="r"><code># Use read_excel to read it as dataframe
+bike0 &lt;- read_excel(bike.temp,
+                   sheet = &quot;Data&quot;,
+                   range = cell_cols(&quot;A:B&quot;))
+
+# change dates to get year, month, and week
+bike &lt;- bike0 %&gt;% 
+  clean_names() %&gt;% 
+  rename (bikes_hired = number_of_bicycle_hires) %&gt;% 
+  mutate (year = year(day),
+          month = lubridate::month(day, label = TRUE),
+          week = isoweek(day))</code></pre>
+</div>
+<div id="facet-grid-by-month-and-year" class="section level3">
+<h3>Facet grid by month and year</h3>
+<pre class="r"><code>knitr::include_graphics(&quot;../images/tfl_distributions_monthly.png&quot;, error=F)</code></pre>
+<p><img src="../images/tfl_distributions_monthly.png" width="100%" style="display: block; margin: auto;" /></p>
+<blockquote>
+<p>Answer below</p>
+</blockquote>
+<p>The grid above shows a large decrease in bike rentals in May and June 2020 compared to previous years. This huge decrease is clearly to do with COVID-19 lockdowns since people had to stay inside. We can also see that May and June have some variability year to year which most likely has to do with weather conditions in those two months (i.e. if it’s warmer in May 2018 than in May 2017, there would be more bike rentals in 2018).</p>
+</div>
+<div id="reproduce-the-following-two-graphs." class="section level3">
+<h3>Reproduce the following two graphs.</h3>
+<pre class="r"><code>knitr::include_graphics(&quot;../images/tfl_monthly.png&quot;, error=F)</code></pre>
+<p><img src="../images/tfl_monthly.png" width="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Clean the data 
+bike_exp &lt;- bike %&gt;%
+  filter(year &gt; 2015) %&gt;% #Filter all the data that after 2015
+  group_by(month) %&gt;%
+  summarise(expected_rentals=mean(bikes_hired)) # Calculate the expected rentals
+
+# Replicate the first graph of actual and expected rentals for each month across years
+plot &lt;- bike %&gt;%
+  filter(year &gt; 2015) %&gt;%
+  group_by(year, month) %&gt;%
+  summarise(actual_rentals=mean(bikes_hired)) %&gt;% # Calculate the actual mean rentals for each month
+  inner_join(bike_exp, by=&#39;month&#39;) %&gt;% # Combine the data with original dataset
+  mutate(
+    up=if_else(actual_rentals &gt; expected_rentals, actual_rentals - expected_rentals, 0),
+    down=if_else(actual_rentals &lt; expected_rentals, expected_rentals - actual_rentals, 0)) %&gt;% # Create the up and down variable for plotting the shaded area using geom_ribbon
+  ggplot(aes(x=month)) +
+  geom_line(aes(y=actual_rentals, group=1), size=0.1, colour=&#39;black&#39;) +
+  geom_line(aes(y=expected_rentals, group=1), size=0.7, colour=&#39;blue&#39;) + # Create lines for actual and expected rentals data for each month across years
+  geom_ribbon(aes(ymin=expected_rentals, ymax=expected_rentals+up, group=1), fill=&#39;#7DCD85&#39;, alpha=0.4) +
+  geom_ribbon(aes(ymin=expected_rentals, ymax=expected_rentals-down, group=1), fill=&#39;#CB454A&#39;, alpha=0.4) + # Create shaded areas and fill with different colors for up and down side
+  facet_wrap(~year) + # Facet the graphs by year
+  theme_bw() + # Theme
+  labs(title=&quot;Monthly changes in TfL bike rentals&quot;, subtitle=&quot;Change from monthly average shown in blue and calculated between 2016-2019&quot;, x=&quot;&quot;, y=&quot;Bike rentals&quot;) +
+  NULL
+
+plot</code></pre>
+<p><img src="/blogs/homework2_files/figure-html/unnamed-chunk-19-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(file=&#39;bike1_plot.png&#39;, plot=plot, width=12, height=8) # Create and save the plot
+knitr::include_graphics(&quot;bike1_plot.png&quot;, error=F)</code></pre>
+<p><img src="bike1_plot.png" width="1800" style="display: block; margin: auto;" /></p>
+</div>
+<div id="replicate-the-second-graph-of-percentage-changes-from-the-expected-level-of-weekly-rentals." class="section level3">
+<h3>Replicate the second graph of percentage changes from the expected level of weekly rentals.</h3>
+<pre class="r"><code>knitr::include_graphics(&quot;../images/tfl_weekly.png&quot;, error=F)</code></pre>
+<p><img src="../images/tfl_weekly.png" width="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Clean the data
+bike_exp_week &lt;- bike %&gt;%
+  filter(year &gt; 2015) %&gt;%
+  mutate(week=if_else(month == &#39;Jan&#39; &amp; week == 53, 1, week)) %&gt;% # Create week variable for the dataset
+  group_by(week) %&gt;%
+  summarise(expected_rentals=mean(bikes_hired))
+
+# Make the graph
+plot &lt;- bike %&gt;%
+  filter(year &gt; 2015) %&gt;%
+  mutate(week=if_else(month == &#39;Jan&#39; &amp; week == 53, 1, week)) %&gt;%
+  group_by(year, week) %&gt;%
+  summarise(actual_rentals=mean(bikes_hired)) %&gt;%
+  inner_join(bike_exp_week, by=&#39;week&#39;) %&gt;%
+  mutate(
+    actual_rentals=(actual_rentals-expected_rentals)/expected_rentals, #Calculate the excess rentals 
+    up=if_else(actual_rentals &gt; 0, actual_rentals, 0),
+    down=if_else(actual_rentals &lt; 0, actual_rentals, 0), # Create the up and down variable for plotting the shaded area using geom_ribbon
+    colour=if_else(up &gt; 0, &#39;G&#39;, &#39;R&#39;)) %&gt;% # Define the colors for up and down side
+  ggplot(aes(x=week)) +
+  geom_rect(aes(xmin=13, xmax=26, ymin=-Inf, ymax=Inf), alpha=0.005) + 
+  geom_rect(aes(xmin=39, xmax=53, ymin=-Inf, ymax=Inf), alpha=0.005) + # Add shaded grey areas for the according week ranges
+  geom_line(aes(y=actual_rentals, group=1), size=0.1, colour=&#39;black&#39;) +
+  geom_ribbon(aes(ymin=0, ymax=up, group=1), fill=&#39;#7DCD85&#39;, alpha=0.4) +
+  geom_ribbon(aes(ymin=down, ymax=0, group=1), fill=&#39;#CB454A&#39;, alpha=0.4) + # Create shaded areas and fill with different colors for up and down
+  geom_rug(aes(color=colour), sides=&#39;b&#39;) + # Plot rugs using geom_rug
+  scale_colour_manual(breaks=c(&#39;G&#39;, &#39;R&#39;), values=c(&#39;#7DCD85&#39;, &#39;#CB454A&#39;)) +
+  facet_wrap(~year) + # Facet by year
+  theme_bw() + # Theme
+  labs(title=&quot;Weekly changes in TfL bike rentals&quot;, subtitle=&quot;% change from weekly averages calculated between 2016-2019&quot;, x=&quot;week&quot;, y=&quot;&quot;) +
+  NULL
+
+plot</code></pre>
+<p><img src="/blogs/homework2_files/figure-html/unnamed-chunk-20-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(file=&#39;bike2_plot.png&#39;, plot=plot, width=12, height=8) # Create and save the plot
+knitr::include_graphics(&quot;bike2_plot.png&quot;, error=F)</code></pre>
+<p><img src="bike2_plot.png" width="1800" style="display: block; margin: auto;" /></p>
+<p>Should you use the mean or the median to calculate your expected rentals? Why?
+We use the mean to calculate the expected rentals.</p>
+</div>
+</div>
