@@ -81,10 +81,10 @@ params:
   tiles:
     enable: yes
     showcase:
-      - image: backgroun_sunset.jpg
-        subtitle: I love sunsets
-        title: hanlulin
-        url: blogs/hanlulin
+      - image: pic07.jpg
+        subtitle: "Play the field and have some fun"
+        title: About me
+        url: blogs/aboutme
       - image: pic02.jpg
         subtitle: Feugiat Amet Tempus
         title: Tempus
