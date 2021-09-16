@@ -1,14 +1,14 @@
 ---
-categories:
-- ""
-- ""
-date: "2017-10-31T21:28:43-05:00"
-description: ""
-draft: false
+title: "Project 3 - Applied Statistics"
+date: '2017-10-31T21:28:43-05:00'
+description: ''
+draft: no
 image: pic08.jpg
-keywords: ""
+keywords: ''
 slug: project3
-title: Project 3 - Applied Statistics
+categories:
+- ''
+- ''
 ---
 
 ```{r, setup}
@@ -417,73 +417,73 @@ ggsave(file='brexit_plot.png', plot=plot, width=14, height=8)
 knitr::include_graphics("brexit_plot.png", error=F)
 ```
 
-# Challenge 2: CDC COVID-19 Public Use Data
+<!-- # Challenge 2: CDC COVID-19 Public Use Data -->
 
-The [CDC Covid-19 Case Surveillance Data](https://data.cdc.gov/Case-Surveillance/COVID-19-Case-Surveillance-Public-Use-Data/vbim-akqf) is a case surveillance public use dataset with 12 elements for all COVID-19 cases shared with CDC and includes demographics, any exposure history, disease severity indicators and outcomes, presence of any underlying medical conditions and risk behaviors. You can see the variables from
+<!-- The [CDC Covid-19 Case Surveillance Data](https://data.cdc.gov/Case-Surveillance/COVID-19-Case-Surveillance-Public-Use-Data/vbim-akqf) is a case surveillance public use dataset with 12 elements for all COVID-19 cases shared with CDC and includes demographics, any exposure history, disease severity indicators and outcomes, presence of any underlying medical conditions and risk behaviors. You can see the variables from -->
 
-```{r covid_data, out.width="100%"}
-knitr::include_graphics(here::here("images", "cdc_data.png"), error=F)
-```
+<!-- ```{r covid_data, out.width="100%"} -->
+<!-- knitr::include_graphics(here::here("images", "cdc_data.png"), error=F) -->
+<!-- ``` -->
 
-```{r covid_challenge, out.width="100%"}
-knitr::include_graphics(here::here("images", "covid_death_rate_comorbidities.png"), error=F)
-knitr::include_graphics(here::here("images", "covid_death_rate_icu.png"), error=F)
-```
+<!-- ```{r covid_challenge, out.width="100%"} -->
+<!-- knitr::include_graphics(here::here("images", "covid_death_rate_comorbidities.png"), error=F) -->
+<!-- knitr::include_graphics(here::here("images", "covid_death_rate_icu.png"), error=F) -->
+<!-- ``` -->
 
-### Replicating CDC plots
+<!-- ### Replicating CDC plots -->
 
-```{r}
-cdc_db <- DBI::dbConnect(
-  drv=RSQLite::SQLite(),
-  dbname='cdc_data.db')
+<!-- ```{r} -->
+<!-- cdc_db <- DBI::dbConnect( -->
+<!--   drv=RSQLite::SQLite(), -->
+<!--   dbname='cdc_data.db') -->
 
-DBI::dbListTables(cdc_db)
+<!-- DBI::dbListTables(cdc_db) -->
 
-cdc_data <- dplyr::tbl(cdc_db, 'cdc')
+<!-- cdc_data <- dplyr::tbl(cdc_db, 'cdc') -->
 
-query <- cdc_data %>%
-  select(age_group, sex, medcond_yn, icu_yn, death_yn) %>%
-  filter(age_group != 'NA', age_group != 'Missing') %>%
-  filter(medcond_yn != 'Missing', medcond_yn != 'Unknown') %>%
-  filter(icu_yn != 'Missing', icu_yn != 'Unknown') %>%
-  filter(death_yn != 'Missing', death_yn != 'Unknown') %>%
-  filter(sex != 'Missing', sex != 'Unknown', sex != 'Other')
+<!-- query <- cdc_data %>% -->
+<!--   select(age_group, sex, medcond_yn, icu_yn, death_yn) %>% -->
+<!--   filter(age_group != 'NA', age_group != 'Missing') %>% -->
+<!--   filter(medcond_yn != 'Missing', medcond_yn != 'Unknown') %>% -->
+<!--   filter(icu_yn != 'Missing', icu_yn != 'Unknown') %>% -->
+<!--   filter(death_yn != 'Missing', death_yn != 'Unknown') %>% -->
+<!--   filter(sex != 'Missing', sex != 'Unknown', sex != 'Other') -->
 
-dbplyr::sql_render(query)
-cdc_clean <- query %>% collect()
+<!-- dbplyr::sql_render(query) -->
+<!-- cdc_clean <- query %>% collect() -->
 
-plot1 <- cdc_clean %>%
-  mutate(count_yes=if_else(death_yn == 'Yes', 1, 0)) %>%
-  group_by(age_group, sex, medcond_yn) %>%
-  summarise(death_rate=sum(count_yes)/n()*100) %>%
-  mutate(medcond_yn=if_else(medcond_yn=='Yes', 'With comorbidities', 'Without comorbidities')) %>%
-  ggplot(aes(x=death_rate, y=age_group)) +
-  geom_col(fill='#566798') +
-  facet_grid(medcond_yn ~ sex) +
-  theme_bw() +
-  labs(title="Covid death % by age group, sex and presence of co-morbidities", x="", y="") +
-  geom_text(aes(label=round(death_rate, 1), hjust=-0.1)) +
-  NULL
+<!-- plot1 <- cdc_clean %>% -->
+<!--   mutate(count_yes=if_else(death_yn == 'Yes', 1, 0)) %>% -->
+<!--   group_by(age_group, sex, medcond_yn) %>% -->
+<!--   summarise(death_rate=sum(count_yes)/n()*100) %>% -->
+<!--   mutate(medcond_yn=if_else(medcond_yn=='Yes', 'With comorbidities', 'Without comorbidities')) %>% -->
+<!--   ggplot(aes(x=death_rate, y=age_group)) + -->
+<!--   geom_col(fill='#566798') + -->
+<!--   facet_grid(medcond_yn ~ sex) + -->
+<!--   theme_bw() + -->
+<!--   labs(title="Covid death % by age group, sex and presence of co-morbidities", x="", y="") + -->
+<!--   geom_text(aes(label=round(death_rate, 1), hjust=-0.1)) + -->
+<!--   NULL -->
 
-ggsave(file='cdc1_plot.png', plot=plot1, width=14, height=6)
-knitr::include_graphics("cdc1_plot.png", error=F)
+<!-- ggsave(file='cdc1_plot.png', plot=plot1, width=14, height=6) -->
+<!-- knitr::include_graphics("cdc1_plot.png", error=F) -->
 
-plot2 <- cdc_clean %>%
-  mutate(count_yes=if_else(death_yn == 'Yes', 1, 0)) %>%
-  group_by(age_group, sex, icu_yn) %>%
-  summarise(death_rate=sum(count_yes)/n()*100) %>%
-  mutate(medcond_yn=if_else(icu_yn=='Yes', 'ICU Admission', 'No ICU Admission')) %>%
-  ggplot(aes(x=death_rate, y=age_group)) +
-  geom_col(fill='#ea8171') +
-  facet_grid(medcond_yn ~ sex) +
-  theme_bw() +
-  labs(title="Covid death % by age group, sex and presence of co-morbidities", x="", y="") +
-  geom_text(aes(label=round(death_rate, 1), hjust=-0.1)) +
-  NULL
+<!-- plot2 <- cdc_clean %>% -->
+<!--   mutate(count_yes=if_else(death_yn == 'Yes', 1, 0)) %>% -->
+<!--   group_by(age_group, sex, icu_yn) %>% -->
+<!--   summarise(death_rate=sum(count_yes)/n()*100) %>% -->
+<!--   mutate(medcond_yn=if_else(icu_yn=='Yes', 'ICU Admission', 'No ICU Admission')) %>% -->
+<!--   ggplot(aes(x=death_rate, y=age_group)) + -->
+<!--   geom_col(fill='#ea8171') + -->
+<!--   facet_grid(medcond_yn ~ sex) + -->
+<!--   theme_bw() + -->
+<!--   labs(title="Covid death % by age group, sex and presence of co-morbidities", x="", y="") + -->
+<!--   geom_text(aes(label=round(death_rate, 1), hjust=-0.1)) + -->
+<!--   NULL -->
 
-ggsave(file='cdc2_plot.png', plot=plot2, width=14, height=6)
-knitr::include_graphics("cdc2_plot.png", error=F)
-```
+<!-- ggsave(file='cdc2_plot.png', plot=plot2, width=14, height=6) -->
+<!-- knitr::include_graphics("cdc2_plot.png", error=F) -->
+<!-- ``` -->
 
 # Challenge 3: GDP components countries
 
