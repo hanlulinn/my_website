@@ -1,0 +1,21 @@
+---
+title: "My Resume"
+date: '2017-10-31T21:28:43-05:00'
+description: ''
+draft: no
+image: 
+keywords: ''
+slug: cvimage
+categories:
+- ''
+- ''
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r cvimage, echo=FALSE, out.width="60%"}
+knitr::include_graphics("/img/blogs/pic15.jpg", error = FALSE)
+```

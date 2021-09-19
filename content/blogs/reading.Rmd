@@ -1,0 +1,44 @@
+---
+title: "2021 Reading List"
+date: '2017-10-31T21:28:43-05:00'
+description: ''
+draft: no
+image: 
+keywords: ''
+slug: reading
+categories:
+- ''
+- ''
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The following is my reading list for 2021. The list is still being updated.
+
+### 1.Red Notice: How I Became Putin’s No.1 Enemy —— Bill Browder
+
+```{r rednotice, echo=FALSE, out.width="60%"}
+knitr::include_graphics("/img/blogs/rednotice.jpg", error = FALSE)
+```
+
+### 2.Acting with Power: Why We Are More Powerful Than We Believe —— Deborah Gruenfeld
+
+```{r power, echo=FALSE, out.width="60%"}
+knitr::include_graphics("/img/blogs/power.jpg", error = FALSE)
+```
+
+### 3.Why Nations Fail: The Origins of Power, Prosperity, and Poverty —— Daron Acemoglu & James A Robinson
+
+```{r whynationsfail, echo=FALSE, out.width="60%"}
+knitr::include_graphics("/img/blogs/whynationsfail.jpg", error = FALSE)
+```
+
+### 4.The Art of Statistics: Learning from Data —— David Spiegelhalter
+
+```{r statistics, echo=FALSE, out.width="60%"}
+knitr::include_graphics("/img/blogs/statistics.jpg", error = FALSE)
+```
+
+To be continued...

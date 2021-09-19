@@ -123,7 +123,6 @@ yrbss %>%
   NULL
 ```
 
->Answer below
 
 Although, the weights of the people that exercise more or less than 3 days appear to be familiar, there **is a relationship** between the level of physical activity and respective weight. Weight appears to be more clustered for the people that exercise over 3 days and there are evidently more outliers (higher weight) for the people exercising less than 3 days. Therefore, we infer that exercising is helpful in maintaining weight.
 Nonetheless, it is important to keep in mind that there are some people that do weight training to put on muscle (in tuen increasing weight), weights may not be the best indicator of fitness. 
@@ -209,10 +208,9 @@ null_dist %>%
 # IMDB ratings: Differences between directors
 
 ```{r directors, out.width="100%"}
-knitr::include_graphics(here::here("images", "directors.png"), error = FALSE)
+#knitr::include_graphics(here::here("images", "directors.png"), error = FALSE)
 ```
 
-> Answer below
 
 $H_0: \mu_a - \mu_b == 0$
 
@@ -289,7 +287,7 @@ omega <- read_csv(here::here("data", "omega.csv"))
 glimpse(omega) #Exploring the omega dataset
 ```
 
-## Relationship Salary - Gender ?
+## Relationship Salary - Gender
 
 ```{r, confint_single_valiables}
 # Summary Statistics of salary by gender
@@ -311,8 +309,6 @@ omega %>%
     upper=mean+t_critical*se) %>%
   as.data.frame()
 ```
-
-> Answer below
 
 Evidently, the **mean salary for females is lower than that of males**, but the variation for both the gender's is similar i.e. there is not a huge gap in the salary levels within each gender. Additionally, since the t-critical value is greater than 2, with 95% level of confidence, we can reject our null hypothesis that mean salary of males subtracted from the mean salary of females is zero (it is also worthwhile to notice that the confidence intervals do not overlap). 
 You can also run a hypothesis testing, assuming as a null hypothesis that the mean difference in salaries is zero, or that, on average, men and women make the same amount of money. You should tun your hypothesis testing using `t.test()` and with the simulation method from the `infer` package.
@@ -336,11 +332,10 @@ omega %>%
   get_p_value(obs_stat=obs_diff, direction='both')
 ```
 
-> Answer below
 
 The p-value from the t-test is 0.0002 and from get_p_value is 0 (which is much lesser than the hurdle of 0.05). Therefore with 95% level of confidence, we can reject the **null hypothesis** that the mean difference in salaries is 0. Further, since this p-value seems improbable, it may be worthwhile to consider if there are floating-point numbers or there has been omission of important data points. 
 
-## Relationship Experience - Gender?
+## Relationship Experience - Gender
 
 ```{r, experience_stats}
 # Summary Statistics of salary by gender
@@ -349,11 +344,10 @@ favstats(experience ~ gender, data=omega)
 t.test(experience ~ gender, data=omega)
 ```
 
-> Answer below
 
 This p-value below 0.05 suggests that at 95% confidence level we can **reject the null hypothesis** that the mean difference between the work experience of males and females is 0. This finding definately endangers our earlier assumption that the difference in mean salaries of males and females is due to some inherent bias (gender disparity at workplace). However, after this analysis we can say that one of the reasons for lower salaries of females is the lesser work experience as comapred to that of men (a case of correlation not causation).
 
-## Relationship Salary - Experience ?
+## Relationship Salary - Experience
 
 ```{r, salary_exp_scatter}
 #making a scatter plot of the experience and salary of employees
@@ -374,7 +368,6 @@ omega %>%
   theme_bw()
 ```
 
-> Answer below
 
 On a closer look, some of the possible inferencs are:
 
@@ -385,7 +378,7 @@ On a closer look, some of the possible inferencs are:
 # Challenge 1: Brexit plot
 
 ```{r brexit_challenge, out.width="100%"}
-knitr::include_graphics(here::here('images', 'brexit.png'), error=F)
+# knitr::include_graphics(here::here('images', 'brexit.png'), error=F)
 ```
 
 ### Replicating Brexit plot
@@ -413,8 +406,9 @@ plot <- brexit %>%
     y = "Leave % in the 2016 Brexit referendum") +
   NULL
 
-ggsave(file='brexit_plot.png', plot=plot, width=14, height=8)
-knitr::include_graphics("brexit_plot.png", error=F)
+# ggsave(file='brexit_plot.png', plot=plot, width=14, height=8)
+# knitr::include_graphics("brexit_plot.png", error=F)
+plot
 ```
 
 <!-- # Challenge 2: CDC COVID-19 Public Use Data -->
@@ -530,7 +524,7 @@ glimpse(tidy_GDP_data)
 ```
 
 ```{r gdp1, out.width="100%"}
-knitr::include_graphics(here::here("images", "gdp1.png"), error=F)
+#knitr::include_graphics(here::here("images", "gdp1.png"), error=F)
 ```
 
 ### Replicating the first GDP plot
@@ -557,15 +551,15 @@ plot <- tidy_GDP_data %>%
        subtitle="In constant 2010 USD") +
   NULL
 
-ggsave(file='gdp1_plot.png', plot=plot, width=8, height=5)
-knitr::include_graphics("gdp1_plot.png", error=F)
+# ggsave(file='gdp1_plot.png', plot=plot, width=8, height=5)
+# knitr::include_graphics("gdp1_plot.png", error=F)
+plot
 ```
 
 ```{r gdp2, out.width="100%"}
-knitr::include_graphics(here::here("images", "gdp2.png"), error=F)
+#knitr::include_graphics(here::here("images", "gdp2.png"), error=F)
 ```
 
-> Answer below
 
 This plot depicts the % of government expenditure, gross capital formation, household expenditure, and net exports as a function of the respective country's income. 
 
@@ -624,11 +618,11 @@ plot <- wide_GDP_data2 %>%
        caption="Source: United Nations, https://unstats.un.org/unsd/snaama/Downloads") +
   NULL
 
-ggsave(file='gdp2_plot.png', plot=plot, width=8, height=5)
-knitr::include_graphics("gdp2_plot.png", error=F)
+# ggsave(file='gdp2_plot.png', plot=plot, width=8, height=5)
+# knitr::include_graphics("gdp2_plot.png", error=F)
+plot
 ```
 
-> Answer below
 
 Attached below is the column for GDP percentage change (each country and year). This has been calculated by first finding the GDP manually (sum of household expenditure, government expenditure, gross capital formation, and net exports) and then taking the percentage difference from the GDP provided in the dataframe. 
 

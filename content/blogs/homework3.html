@@ -366,9 +366,6 @@ yrbss %&gt;%
   labs(title=&quot;Relationship between exercise frequency and weight&quot;, x=&quot;Exercise at least 3 days per week?&quot;, y=&quot;Weight&quot;) +
   NULL</code></pre>
 <p><img src="/blogs/homework3_files/figure-html/boxplot-1.png" width="648" style="display: block; margin: auto;" /></p>
-<blockquote>
-<p>Answer below</p>
-</blockquote>
 <p>Although, the weights of the people that exercise more or less than 3 days appear to be familiar, there <strong>is a relationship</strong> between the level of physical activity and respective weight. Weight appears to be more clustered for the people that exercise over 3 days and there are evidently more outliers (higher weight) for the people exercising less than 3 days. Therefore, we infer that exercising is helpful in maintaining weight.
 Nonetheless, it is important to keep in mind that there are some people that do weight training to put on muscle (in tuen increasing weight), weights may not be the best indicator of fitness.</p>
 </div>
@@ -457,11 +454,7 @@ Nonetheless, it is important to keep in mind that there are some people that do 
 </div>
 <div id="imdb-ratings-differences-between-directors" class="section level1">
 <h1>IMDB ratings: Differences between directors</h1>
-<pre class="r"><code>knitr::include_graphics(here::here(&quot;images&quot;, &quot;directors.png&quot;), error = FALSE)</code></pre>
-<p><img src="C:/Users/hanlu/Desktop/RStudio/my_website/images/directors.png" width="100%" style="display: block; margin: auto;" /></p>
-<blockquote>
-<p>Answer below</p>
-</blockquote>
+<pre class="r"><code>#knitr::include_graphics(here::here(&quot;images&quot;, &quot;directors.png&quot;), error = FALSE)</code></pre>
 <p><span class="math inline">\(H_0: \mu_a - \mu_b == 0\)</span></p>
 <p>(HO: mean of Steven Spielberg rating - mean of Tim Burton = 0)</p>
 <p><span class="math inline">\(H_a: \mu_a - \mu_b != 0\)</span></p>
@@ -544,7 +537,7 @@ glimpse(omega) #Exploring the omega dataset</code></pre>
 ## $ experience &lt;dbl&gt; 16, 25, 15, 33, 16, 19, 32, 34, 1, 44, 7, 14, 33, 19, 24, 3~</code></pre>
 </div>
 <div id="relationship-salary---gender" class="section level2">
-<h2>Relationship Salary - Gender ?</h2>
+<h2>Relationship Salary - Gender</h2>
 <pre class="r"><code># Summary Statistics of salary by gender
 mosaic::favstats(salary ~ gender, data=omega)</code></pre>
 <pre><code>##   gender   min    Q1 median    Q3   max  mean   sd  n missing
@@ -568,9 +561,6 @@ omega %&gt;%
 <pre><code>##   gender  mean   sd count   se t_critical lower upper
 ## 1 female 64543 7567    26 1484       2.06 61486 67599
 ## 2   male 73239 7463    24 1523       2.07 70088 76390</code></pre>
-<blockquote>
-<p>Answer below</p>
-</blockquote>
 <p>Evidently, the <strong>mean salary for females is lower than that of males</strong>, but the variation for both the gender’s is similar i.e. there is not a huge gap in the salary levels within each gender. Additionally, since the t-critical value is greater than 2, with 95% level of confidence, we can reject our null hypothesis that mean salary of males subtracted from the mean salary of females is zero (it is also worthwhile to notice that the confidence intervals do not overlap).
 You can also run a hypothesis testing, assuming as a null hypothesis that the mean difference in salaries is zero, or that, on average, men and women make the same amount of money. You should tun your hypothesis testing using <code>t.test()</code> and with the simulation method from the <code>infer</code> package.</p>
 <div id="hypothesis-testing-for-salary-difference-between-genders" class="section level3">
@@ -603,14 +593,11 @@ omega %&gt;%
 ##   p_value
 ##     &lt;dbl&gt;
 ## 1       0</code></pre>
-<blockquote>
-<p>Answer below</p>
-</blockquote>
 <p>The p-value from the t-test is 0.0002 and from get_p_value is 0 (which is much lesser than the hurdle of 0.05). Therefore with 95% level of confidence, we can reject the <strong>null hypothesis</strong> that the mean difference in salaries is 0. Further, since this p-value seems improbable, it may be worthwhile to consider if there are floating-point numbers or there has been omission of important data points.</p>
 </div>
 </div>
 <div id="relationship-experience---gender" class="section level2">
-<h2>Relationship Experience - Gender?</h2>
+<h2>Relationship Experience - Gender</h2>
 <pre class="r"><code># Summary Statistics of salary by gender
 favstats(experience ~ gender, data=omega)</code></pre>
 <pre><code>##   gender min    Q1 median   Q3 max  mean    sd  n missing
@@ -628,13 +615,10 @@ favstats(experience ~ gender, data=omega)</code></pre>
 ## sample estimates:
 ## mean in group female   mean in group male 
 ##                 7.38                21.12</code></pre>
-<blockquote>
-<p>Answer below</p>
-</blockquote>
 <p>This p-value below 0.05 suggests that at 95% confidence level we can <strong>reject the null hypothesis</strong> that the mean difference between the work experience of males and females is 0. This finding definately endangers our earlier assumption that the difference in mean salaries of males and females is due to some inherent bias (gender disparity at workplace). However, after this analysis we can say that one of the reasons for lower salaries of females is the lesser work experience as comapred to that of men (a case of correlation not causation).</p>
 </div>
 <div id="relationship-salary---experience" class="section level2">
-<h2>Relationship Salary - Experience ?</h2>
+<h2>Relationship Salary - Experience</h2>
 <pre class="r"><code>#making a scatter plot of the experience and salary of employees
 omega %&gt;%
   ggplot(aes(x=experience, y=salary)) +
@@ -651,9 +635,6 @@ omega %&gt;%
   ggpairs(aes(colour=gender, alpha = 0.3)) +
   theme_bw()</code></pre>
 <p><img src="/blogs/homework3_files/figure-html/ggpairs-1.png" width="648" style="display: block; margin: auto;" /></p>
-<blockquote>
-<p>Answer below</p>
-</blockquote>
 <p>On a closer look, some of the possible inferencs are:</p>
 <ol style="list-style-type: decimal">
 <li><p>The feamles appear to be at the lower level of jobs (interns, junior managers, etc) whereas the top managament is clustered with male.</p></li>
@@ -663,8 +644,7 @@ omega %&gt;%
 </div>
 <div id="challenge-1-brexit-plot" class="section level1">
 <h1>Challenge 1: Brexit plot</h1>
-<pre class="r"><code>knitr::include_graphics(here::here(&#39;images&#39;, &#39;brexit.png&#39;), error=F)</code></pre>
-<p><img src="C:/Users/hanlu/Desktop/RStudio/my_website/images/brexit.png" width="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># knitr::include_graphics(here::here(&#39;images&#39;, &#39;brexit.png&#39;), error=F)</code></pre>
 <div id="replicating-brexit-plot" class="section level3">
 <h3>Replicating Brexit plot</h3>
 <pre class="r"><code>brexit &lt;- read_csv(here::here(&#39;data&#39;, &#39;brexit_results.csv&#39;))
@@ -701,9 +681,10 @@ plot &lt;- brexit %&gt;%
     y = &quot;Leave % in the 2016 Brexit referendum&quot;) +
   NULL
 
-ggsave(file=&#39;brexit_plot.png&#39;, plot=plot, width=14, height=8)
-knitr::include_graphics(&quot;brexit_plot.png&quot;, error=F)</code></pre>
-<p><img src="brexit_plot.png" width="2100" style="display: block; margin: auto;" /></p>
+# ggsave(file=&#39;brexit_plot.png&#39;, plot=plot, width=14, height=8)
+# knitr::include_graphics(&quot;brexit_plot.png&quot;, error=F)
+plot</code></pre>
+<p><img src="/blogs/homework3_files/figure-html/replicate_brexit_plot-1.png" width="648" style="display: block; margin: auto;" /></p>
 <!-- # Challenge 2: CDC COVID-19 Public Use Data -->
 <!-- The [CDC Covid-19 Case Surveillance Data](https://data.cdc.gov/Case-Surveillance/COVID-19-Case-Surveillance-Public-Use-Data/vbim-akqf) is a case surveillance public use dataset with 12 elements for all COVID-19 cases shared with CDC and includes demographics, any exposure history, disease severity indicators and outcomes, presence of any underlying medical conditions and risk behaviors. You can see the variables from -->
 <!-- ```{r covid_data, out.width="100%"} -->
@@ -805,8 +786,7 @@ glimpse(tidy_GDP_data)</code></pre>
 ## $ IndicatorName &lt;chr&gt; &quot;Final consumption expenditure&quot;, &quot;Final consumption expe~
 ## $ Year          &lt;dbl&gt; 1970, 1971, 1972, 1973, 1974, 1975, 1976, 1977, 1978, 19~
 ## $ Value         &lt;dbl&gt; 5.56, 5.33, 5.20, 5.75, 6.15, 6.32, 6.37, 6.90, 7.09, 6.~</code></pre>
-<pre class="r"><code>knitr::include_graphics(here::here(&quot;images&quot;, &quot;gdp1.png&quot;), error=F)</code></pre>
-<p><img src="C:/Users/hanlu/Desktop/RStudio/my_website/images/gdp1.png" width="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#knitr::include_graphics(here::here(&quot;images&quot;, &quot;gdp1.png&quot;), error=F)</code></pre>
 </div>
 <div id="replicating-the-first-gdp-plot" class="section level3">
 <h3>Replicating the first GDP plot</h3>
@@ -830,14 +810,11 @@ plot &lt;- tidy_GDP_data %&gt;%
        subtitle=&quot;In constant 2010 USD&quot;) +
   NULL
 
-ggsave(file=&#39;gdp1_plot.png&#39;, plot=plot, width=8, height=5)
-knitr::include_graphics(&quot;gdp1_plot.png&quot;, error=F)</code></pre>
-<p><img src="gdp1_plot.png" width="1200" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>knitr::include_graphics(here::here(&quot;images&quot;, &quot;gdp2.png&quot;), error=F)</code></pre>
-<p><img src="C:/Users/hanlu/Desktop/RStudio/my_website/images/gdp2.png" width="100%" style="display: block; margin: auto;" /></p>
-<blockquote>
-<p>Answer below</p>
-</blockquote>
+# ggsave(file=&#39;gdp1_plot.png&#39;, plot=plot, width=8, height=5)
+# knitr::include_graphics(&quot;gdp1_plot.png&quot;, error=F)
+plot</code></pre>
+<p><img src="/blogs/homework3_files/figure-html/replicate_plot_gdp1-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#knitr::include_graphics(here::here(&quot;images&quot;, &quot;gdp2.png&quot;), error=F)</code></pre>
 <p>This plot depicts the % of government expenditure, gross capital formation, household expenditure, and net exports as a function of the respective country’s income.</p>
 <p><strong>India</strong> - With the largest amount being spent on household expenditure, the gross capital formation is increasing while the household expenditure has started to decrease (considering that India is a developing country with low income, it is understandable that a huge chunk of income goes towards household expenses. However, the decrease in % spent on household income can be due to the improvement in the economy).</p>
 <p><strong>Germany</strong> - They have relatively high exports when compared to India and US which can be allocated to the high exports from the automative industry (better technology).</p>
@@ -891,12 +868,10 @@ plot &lt;- wide_GDP_data2 %&gt;%
        caption=&quot;Source: United Nations, https://unstats.un.org/unsd/snaama/Downloads&quot;) +
   NULL
 
-ggsave(file=&#39;gdp2_plot.png&#39;, plot=plot, width=8, height=5)
-knitr::include_graphics(&quot;gdp2_plot.png&quot;, error=F)</code></pre>
-<p><img src="gdp2_plot.png" width="1200" style="display: block; margin: auto;" /></p>
-<blockquote>
-<p>Answer below</p>
-</blockquote>
+# ggsave(file=&#39;gdp2_plot.png&#39;, plot=plot, width=8, height=5)
+# knitr::include_graphics(&quot;gdp2_plot.png&quot;, error=F)
+plot</code></pre>
+<p><img src="/blogs/homework3_files/figure-html/replicate_plot_gdp2-1.png" width="648" style="display: block; margin: auto;" /></p>
 <p>Attached below is the column for GDP percentage change (each country and year). This has been calculated by first finding the GDP manually (sum of household expenditure, government expenditure, gross capital formation, and net exports) and then taking the percentage difference from the GDP provided in the dataframe.</p>
 <pre class="r"><code>GDPdiff&lt;- wide_GDP_data %&gt;%
   select(GDPDifferencePct, Country, Year)
